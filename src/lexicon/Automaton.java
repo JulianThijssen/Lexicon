@@ -56,23 +56,27 @@ public class Automaton {
 		
 		Stack<Automaton> automata = new Stack<Automaton>();
 
-		boolean paren = false;
 		String buffer = "";
 		
+		int depth = 0;
 		while (!stream.isEmpty()) {
 			char c = stream.get();
 
 			if (c == LEFT_PAREN) {
-				paren = true;
-				buffer = "";
-				continue;
+				depth++;
+				if (depth == 1) {
+					buffer = "";
+					continue;
+				}
 			}
 			if (c == RIGHT_PAREN) {
-				paren = false;
-				automata.push(parse(buffer));
-				continue;
+				depth--;
+				if (depth == 0) {
+					automata.push(parse(buffer));
+					continue;
+				}
 			}
-			if (paren) {
+			if (depth > 0) {
 				buffer += c;
 				continue;
 			}
